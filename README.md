@@ -31,7 +31,9 @@ So instead of a SaaS chatbot, this is:
 
 | Domain | What it does |
 |---|---|
-| 🔍 **SOP Q&A** | Natural-language questions over the whole knowledge base — web chat and LINE. Hybrid retrieval (vector + keyword) survives sloppy phrasing, typos-with-punctuation, and jargon. |
+| 🔍 **SOP Q&A** | Natural-language questions over the whole knowledge base — web chat and LINE. Hybrid retrieval (vector + keyword) survives sloppy phrasing, typos-with-punctuation, and jargon. Every answer carries a live confidence badge (semantic-search hit count, click for per-document relevance %) and a side panel showing the exact source excerpts it was grounded on. |
+| 🧰 **Personal workspace** | The chat page doubles as a lightweight personal dashboard alongside the SOP assistant: notes, a to-do/schedule tab, a contacts book, and a quick-links shelf — plus a **free-chat mode** for non-SOP questions. All personal-tool data lives in the browser's own local storage; nothing personal is sent to or stored on the server. |
+| 📂 **In-chat document management** | Browse the live document list, open any source file, or open the same in-place SOP editor used by the review console — submit for review or (with the review password) update directly. Request-deletion and direct-delete flows included. |
 | 🙅 **Honest no-answer** | Dual-signal relevance gate. Below threshold → *"I don't have this in my documents, please ask your supervisor"* — never a hallucinated procedure. |
 | 📥 **Unanswered collection** | Every no-answer question is logged (with candidate docs) for human triage: *missing document* vs *retrieval miss*. Feeds the documentation backlog. |
 | ✍️ **Authoring studio** | Step-wizard for two document types (7-section full SOP / lightweight reference doc), or **AI quick-build**: describe the process in plain words and the local LLM interviews you — 5-8 targeted questions (all editable) covering purpose, actors, steps, caveats and FAQ — then structures your answers through the same 7-section template as manual mode. Per-step screenshot attachments, one-click **AI-generated FAQ** (10 colloquial questions from how/where/when/what-if angles), autosaved drafts, live markdown preview. |
@@ -48,9 +50,9 @@ So instead of a SaaS chatbot, this is:
 
 ![review console](./docs/images/review-console.png)
 
-**Web Q&A** — answers cite their source documents with relevance scores; out-of-scope questions get an honest "not in my documents" and are logged for triage:
+**Web Q&A + personal workspace** — the chat page itself: semantic-search confidence badge with per-document relevance %, a live source panel, and a personal-tools sidebar (notes / to-do & schedule / contacts / quick links, all local-storage only — never sent to the server):
 
-![web chat](./docs/images/web-chat.png)
+![web chat](./docs/images/index-chat.png)
 
 **LINE** — `/sop` Q&A with sticky follow-up session (left); attendance bot registering leave, confirming a photographed slip via OCR, and answering queries (right):
 
