@@ -44,33 +44,29 @@
 
 ## 畫面
 
-> 以下截圖都是**真實 UI 跑示範資料**——沒有任何真實文件、姓名或密鑰。
+> 以下截圖都是**真實 UI 跑示範資料**——沒有任何真實文件、姓名或密鑰。順序照使用者實際走的路:問問題 → 送審核發布 → 撰寫新文件 → 同一套搬到 LINE。
 
-**審核台**——待審清單附 AI 預檢標記、修改投稿的左右 diff 對照、一鍵核准/退回:
-
-![審核台](./docs/images/review-console.png)
-
-**網頁問答 + 個人工作區**——問答頁本體:語意搜尋信心徽章(各文件相關度%)、即時來源面板,以及個人工具側欄(筆記/行程待辦/通訊錄/常用連結,全部只存在瀏覽器本機、絕不送到伺服器):
+**1. 網頁問答 + 個人工作區**——問答頁本體:語意搜尋信心徽章(各文件相關度%)、即時來源面板,以及個人工具側欄(筆記/行程待辦/通訊錄/常用連結,全部只存在瀏覽器本機、絕不送到伺服器):
 
 ![網頁問答](./docs/images/index-chat.png)
 
-**LINE**——`/sop` 問答含連續追問(左);出勤機器人登記請假、OCR 確認假單照片、回答查詢(右):
+**2. 審核台**——待審清單附 AI 預檢標記、修改投稿的左右 diff 對照、一鍵核准/退回:
+
+![審核台](./docs/images/review-console.png)
+
+**3. SOP 生成器・AI 快速建立**——用白話描述流程,本機 LLM 針對「新手會卡住的地方」反問你,再自動組裝文件:
+
+![生成器快速建立](./docs/images/gen-quickbuild.png)
+
+**4. SOP 生成器・Agent-Ready 審核**——文件出爐前的 AI 審核閘門:模糊詞、缺路徑、缺完成判準,分級標成必修/建議:
+
+![生成器AI審核](./docs/images/gen-ai-review.png)
+
+**5. LINE**——`/sop` 問答含連續追問(左);出勤機器人登記請假、OCR 確認假單照片、回答查詢(右):
 
 | LINE `/sop` 問答 | LINE 出勤機器人 |
 |---|---|
 | ![line sop](./docs/images/line-sop.png) | ![line attendance](./docs/images/line-attendance.png) |
-
-**LINE 出勤機器人的實際 n8n workflow**——57 個節點:webhook 進線 → 圖片/文字分流 → 假單 OCR 解析與去重合併 → `/sop` 快速通道 → 自然語言請假 Agent → 交接路由 → 每日早報與清理排程(ID/token 已遮蓋):
-
-![n8n workflow](./docs/images/n8n-workflow.png)
-
-**SOP 生成器・AI 快速建立**——用白話描述流程,本機 LLM 針對「新手會卡住的地方」反問你,再自動組裝文件:
-
-![生成器快速建立](./docs/images/gen-quickbuild.png)
-
-**SOP 生成器・Agent-Ready 審核**——文件出爐前的 AI 審核閘門:模糊詞、缺路徑、缺完成判準,分級標成必修/建議:
-
-![生成器AI審核](./docs/images/gen-ai-review.png)
 
 ## 架構
 
@@ -121,6 +117,12 @@ flowchart LR
    - 都沒過 → 固定查無訊息,**根本不呼叫 LLM**(誠實度無法被 prompt 繞過)
    - reranker 服務掛掉 → 優雅退回純 cosine(系統只降級、不中斷)
 6. 過閘的 chunk 帶入**整份來源文件**當上下文,本機對話模型附來源作答。
+
+### LINE 那條線,真實運作證明
+
+上面的問答/架構是共用後端。LINE 這條路是靠 n8n workflow 驅動——57 個節點:webhook 進線 → 圖片/文字分流 → 假單 OCR 解析與去重合併 → `/sop` 快速通道 → 自然語言請假 Agent → 交接路由 → 每日早報與清理排程(ID/token 已遮蓋):
+
+![n8n workflow](./docs/images/n8n-workflow.png)
 
 ## 正確性工程
 

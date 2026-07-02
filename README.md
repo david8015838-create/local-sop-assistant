@@ -44,33 +44,29 @@ So instead of a SaaS chatbot, this is:
 
 ## Screenshots
 
-> All screenshots below run on the real UIs with **demo data** — no real documents, names, or credentials.
+> All screenshots below run on the real UIs with **demo data** — no real documents, names, or credentials. Ordered the way a user actually walks through the system: ask a question → get it reviewed/published → author a new one → the same things over LINE.
 
-**Review console** — pending queue with AI pre-check badges, side-by-side diff of a modification, one-click approve / reject:
-
-![review console](./docs/images/review-console.png)
-
-**Web Q&A + personal workspace** — the chat page itself: semantic-search confidence badge with per-document relevance %, a live source panel, and a personal-tools sidebar (notes / to-do & schedule / contacts / quick links, all local-storage only — never sent to the server):
+**1. Web Q&A + personal workspace** — the chat page itself: semantic-search confidence badge with per-document relevance %, a live source panel, and a personal-tools sidebar (notes / to-do & schedule / contacts / quick links, all local-storage only — never sent to the server):
 
 ![web chat](./docs/images/index-chat.png)
 
-**LINE** — `/sop` Q&A with sticky follow-up session (left); attendance bot registering leave, confirming a photographed slip via OCR, and answering queries (right):
+**2. Review console** — pending queue with AI pre-check badges, side-by-side diff of a modification, one-click approve / reject:
+
+![review console](./docs/images/review-console.png)
+
+**3. SOP generator, AI quick-build** — describe a process in plain words; the local LLM interviews you for exactly what a newcomer would get stuck on, then assembles the document:
+
+![generator quick-build](./docs/images/gen-quickbuild.png)
+
+**4. SOP generator, agent-readiness audit** — the AI review gate before a document ships: vague wording, missing paths, and absent success criteria get flagged as must-fix or suggestion:
+
+![generator AI review](./docs/images/gen-ai-review.png)
+
+**5. LINE** — `/sop` Q&A with sticky follow-up session (left); attendance bot registering leave, confirming a photographed slip via OCR, and answering queries (right):
 
 | LINE `/sop` Q&A | LINE attendance bot |
 |---|---|
 | ![line sop](./docs/images/line-sop.png) | ![line attendance](./docs/images/line-attendance.png) |
-
-**The LINE attendance bot's actual n8n workflow** — 57 nodes: webhook intake → image/text branch → OCR slip parsing with dedup-and-merge, `/sop` fast-path, the natural-language leave agent, handover routing, and scheduled jobs for daily digest and cleanup (IDs/tokens redacted):
-
-![n8n workflow](./docs/images/n8n-workflow.png)
-
-**SOP generator, AI quick-build** — describe a process in plain words; the local LLM interviews you for exactly what a newcomer would get stuck on, then assembles the document:
-
-![generator quick-build](./docs/images/gen-quickbuild.png)
-
-**SOP generator, agent-readiness audit** — the AI review gate before a document ships: vague wording, missing paths, and absent success criteria get flagged as must-fix or suggestion:
-
-![generator AI review](./docs/images/gen-ai-review.png)
 
 ## Architecture
 
@@ -121,6 +117,12 @@ flowchart LR
    - else → fixed no-data reply, **the LLM is never called** (honesty can't be prompt-injected away)
    - reranker service down → graceful fallback to pure cosine (the system degrades, never breaks)
 6. Gate-approved chunks pull in **whole-document context**, and the local chat model answers with source citations.
+
+### The LINE side, for real
+
+The Q&A/architecture above is the shared backend. On LINE it's driven by an n8n workflow — 57 nodes: webhook intake → image/text branch → OCR slip parsing with dedup-and-merge → `/sop` fast-path → the natural-language leave agent → handover routing → scheduled jobs for daily digest and cleanup (IDs/tokens redacted):
+
+![n8n workflow](./docs/images/n8n-workflow.png)
 
 ## Correctness engineering
 
